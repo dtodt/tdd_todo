@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:todo/src/cubits/board_cubit.dart';
+import 'package:todo/src/models/task.dart';
+import 'package:todo/src/states/board_state.dart';
 
 class BoardPage extends StatefulWidget {
   const BoardPage({super.key});
@@ -12,15 +14,22 @@ class BoardPage extends StatefulWidget {
 }
 
 class _BoardPageState extends State<BoardPage> {
+  late BoardCubit cubit;
+
   @override
   Widget build(BuildContext context) {
-    final cubit = context.watch<BoardCubit>();
+    cubit = context.watch<BoardCubit>();
     final state = cubit.state;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Tasks'),
       ),
+      body: switch (state) {
+        EmptyBoardState _ => _emptyState(),
+        LoadedBoardState loaded => _loadedState(loaded.tasks),
+        (_) => const SizedBox(),
+      },
     );
   }
 
@@ -29,7 +38,29 @@ class _BoardPageState extends State<BoardPage> {
     super.initState();
 
     scheduleMicrotask(() {
-      context.read<BoardCubit>().fetchTasks();
+      cubit.fetchTasks();
     });
+  }
+
+  Widget _emptyState() {
+    return const Center(
+      key: Key('EmptyState'),
+      child: Text('Adicione uma nova task'),
+    );
+  }
+
+  Widget _loadedState(List<Task> tasks) {
+    return ListView.builder(
+      key: const Key('LoadedState'),
+      itemBuilder: (context, index) {
+        final task = tasks.elementAt(index);
+        return CheckboxListTile(
+          onChanged: (_) => cubit.checkTask(task),
+          title: Text(task.description),
+          value: task.checked,
+        );
+      },
+      itemCount: tasks.length,
+    );
   }
 }
