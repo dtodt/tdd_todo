@@ -1,7 +1,8 @@
 import 'package:bloc/bloc.dart';
-import 'package:todo/src/repositories/board_repository.dart';
+import 'package:flutter/foundation.dart';
 
 import '../models/task.dart';
+import '../repositories/board_repository.dart';
 import '../states/board_state.dart';
 
 class BoardCubit extends Cubit<BoardState> {
@@ -38,4 +39,9 @@ class BoardCubit extends Cubit<BoardState> {
   Future<void> removeTask(Task task) async {}
 
   Future<void> checkTask(Task task) async {}
+
+  @visibleForTesting
+  void addTasks(List<Task> tasks) {
+    emit(LoadedBoardState(tasks));
+  }
 }
