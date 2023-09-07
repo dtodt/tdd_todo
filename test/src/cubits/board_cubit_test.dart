@@ -68,6 +68,11 @@ void main() {
 
       // Act
       await cubit.addTask(task);
+
+      // Assert
+      final state = cubit.state as LoadedBoardState;
+      expect(state.tasks, hasLength(1));
+      expect(state.tasks, [task]);
     });
 
     test('should emit failure on error', () async {
@@ -86,6 +91,45 @@ void main() {
       await cubit.addTask(task);
     });
   });
-  // group('removeTask |', () { });
+
+  group('removeTask |', () {
+    test('should remove a task', () async {
+      // Arrange
+      when(() => repository.update([])).thenAnswer((_) async => []);
+      cubit.addTasks([task]);
+
+      // Assert
+      expect(
+        cubit.stream,
+        emitsInOrder([
+          isA<LoadedBoardState>(),
+        ]),
+      );
+
+      // Act
+      await cubit.removeTask(task);
+
+      // Assert
+      final state = cubit.state as LoadedBoardState;
+      expect(state.tasks, isEmpty);
+    });
+
+    test('should emit failure on error', () async {
+      // Arrange
+      when(() => repository.update([])).thenThrow(Exception());
+      cubit.addTasks([task]);
+
+      // Assert
+      expect(
+        cubit.stream,
+        emitsInOrder([
+          isA<FailureBoardState>(),
+        ]),
+      );
+
+      // Act
+      await cubit.removeTask(task);
+    });
+  });
   // group('checkTask |', () { });
 }
