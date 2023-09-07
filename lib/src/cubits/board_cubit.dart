@@ -70,9 +70,4 @@ class BoardCubit extends Cubit<BoardState> {
   void addTasks(List<Task> tasks) {
     emit(LoadedBoardState(tasks));
   }
-
-  @visibleForTesting
-  void clear() {
-    emit(EmptyBoardState());
-  }
 }

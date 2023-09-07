@@ -12,12 +12,14 @@ const taskChecked = Task(id: 1, description: 'description', checked: true);
 
 void main() {
   final repository = BoardRepositoryMock();
-  final cubit = BoardCubit(repository);
+  late BoardCubit cubit;
+
+  setUp(() {
+    cubit = BoardCubit(repository);
+  });
 
   tearDown(() {
     reset(repository);
-
-    cubit.clear();
   });
 
   group('fetchTasks |', () {
