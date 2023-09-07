@@ -50,7 +50,21 @@ class BoardCubit extends Cubit<BoardState> {
     }
   }
 
-  Future<void> checkTask(Task task) async {}
+  Future<void> checkTask(Task task) async {
+    final state = this.state;
+    if (state is! LoadedBoardState) return;
+
+    final tasks = state.tasks.toList();
+    final index = tasks.indexOf(task);
+    tasks[index] = task.copyWith(checked: !task.checked);
+
+    try {
+      await repository.update(tasks);
+      emit(LoadedBoardState(tasks));
+    } catch (e) {
+      emit(FailureBoardState(e.toString()));
+    }
+  }
 
   @visibleForTesting
   void addTasks(List<Task> tasks) {

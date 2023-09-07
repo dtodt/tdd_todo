@@ -162,7 +162,8 @@ void main() {
 
     test('should emit failure on error', () async {
       // Arrange
-      when(() => repository.update([task])).thenThrow(Exception());
+      when(() => repository.update([taskChecked])).thenThrow(Exception());
+      cubit.addTasks([task]);
 
       // Assert
       expect(
