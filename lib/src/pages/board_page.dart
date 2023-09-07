@@ -31,6 +31,12 @@ class _BoardPageState extends State<BoardPage> {
         LoadedBoardState loaded => _loadedState(loaded.tasks),
         LoadingBoardState _ => _loadingState(),
       },
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          _addTaskDialog();
+        },
+        child: const Icon(Icons.add),
+      ),
     );
   }
 
@@ -75,10 +81,13 @@ class _BoardPageState extends State<BoardPage> {
       key: const Key('LoadedState'),
       itemBuilder: (context, index) {
         final task = tasks.elementAt(index);
-        return CheckboxListTile(
-          onChanged: (_) => cubit.checkTask(task),
-          title: Text(task.description),
-          value: task.checked,
+        return GestureDetector(
+          onLongPress: () => cubit.removeTask(task),
+          child: CheckboxListTile(
+            onChanged: (_) => cubit.checkTask(task),
+            title: Text(task.description),
+            value: task.checked,
+          ),
         );
       },
       itemCount: tasks.length,
@@ -89,6 +98,36 @@ class _BoardPageState extends State<BoardPage> {
     return const Center(
       key: Key('LoadingState'),
       child: CircularProgressIndicator.adaptive(),
+    );
+  }
+
+  void _addTaskDialog() {
+    var description = '';
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          actions: [
+            TextButton(
+              onPressed: Navigator.of(context).pop,
+              child: const Text('Sair'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+
+                final task = Task(description: description);
+                cubit.addTask(task);
+              },
+              child: const Text('Criar'),
+            ),
+          ],
+          content: TextField(
+            onChanged: (value) => description = value,
+          ),
+          title: const Text('Adicionar uma task'),
+        );
+      },
     );
   }
 }
