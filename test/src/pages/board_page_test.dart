@@ -34,4 +34,19 @@ void main() {
 
     expect(find.byKey(const Key('LoadedState')), findsOneWidget);
   });
+
+  testWidgets('board page should show failure', (tester) async {
+    // Arrange
+    when(() => repository.fetch()).thenThrow(Exception());
+    await tester.pumpWidget(BlocProvider.value(
+      value: cubit,
+      child: const MaterialApp(home: BoardPage()),
+    ));
+
+    // Assert
+    expect(find.byKey(const Key('EmptyState')), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+
+    expect(find.byKey(const Key('FailureState')), findsOneWidget);
+  });
 }
