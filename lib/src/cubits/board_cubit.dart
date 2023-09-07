@@ -1,10 +1,13 @@
 import 'package:bloc/bloc.dart';
+import 'package:todo/src/repositories/board_repository.dart';
 
 import '../models/task.dart';
 import '../states/board_state.dart';
 
 class BoardCubit extends Cubit<BoardState> {
-  BoardCubit() : super(EmptyBoardState());
+  final BoardRepository repository;
+
+  BoardCubit(this.repository) : super(EmptyBoardState());
 
   Future<void> fetchTasks() async {}
 
