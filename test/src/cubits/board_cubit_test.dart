@@ -13,7 +13,11 @@ void main() {
   final repository = BoardRepositoryMock();
   final cubit = BoardCubit(repository);
 
-  tearDown(() => reset(repository));
+  tearDown(() {
+    reset(repository);
+
+    cubit.clear();
+  });
 
   group('fetchTasks |', () {
     test('should retrieve all tasks', () async {
