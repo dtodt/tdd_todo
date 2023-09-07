@@ -20,10 +20,18 @@ void main() {
     reset(repository);
   });
 
-  testWidgets('BoardPage', (tester) async {
+  testWidgets('board page should show loaded', (tester) async {
+    // Arrange
+    when(() => repository.fetch()).thenAnswer((_) async => []);
     await tester.pumpWidget(BlocProvider.value(
       value: cubit,
       child: const MaterialApp(home: BoardPage()),
     ));
+
+    // Assert
+    expect(find.byKey(const Key('EmptyState')), findsOneWidget);
+    await tester.pump(const Duration(seconds: 2));
+
+    expect(find.byKey(const Key('LoadedState')), findsOneWidget);
   });
 }
