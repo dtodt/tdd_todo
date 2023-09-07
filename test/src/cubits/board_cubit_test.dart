@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:todo/src/cubits/board_cubit.dart';
+import 'package:todo/src/models/task.dart';
 import 'package:todo/src/repositories/board_repository.dart';
 import 'package:todo/src/states/board_state.dart';
 
@@ -10,8 +11,17 @@ void main() {
   final repository = BoardRepositoryMock();
   final cubit = BoardCubit(repository);
 
+  tearDown(() => reset(repository));
+
   group('fetchTasks |', () {
     test('should retrieve all tasks', () async {
+      // Arrange
+      when(
+        () => repository.fetch(),
+      ).thenAnswer(
+        (_) async => [const Task(id: 1, description: 'description')],
+      );
+
       // Assert
       expect(
         cubit.stream,
