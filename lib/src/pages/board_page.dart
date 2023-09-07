@@ -29,7 +29,7 @@ class _BoardPageState extends State<BoardPage> {
         EmptyBoardState _ => _emptyState(),
         FailureBoardState _ => _failureState(),
         LoadedBoardState loaded => _loadedState(loaded.tasks),
-        (_) => const SizedBox(),
+        LoadingBoardState _ => _loadingState(),
       },
     );
   }
@@ -82,6 +82,13 @@ class _BoardPageState extends State<BoardPage> {
         );
       },
       itemCount: tasks.length,
+    );
+  }
+
+  Widget _loadingState() {
+    return const Center(
+      key: Key('LoadingState'),
+      child: CircularProgressIndicator.adaptive(),
     );
   }
 }
