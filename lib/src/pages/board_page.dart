@@ -27,7 +27,7 @@ class _BoardPageState extends State<BoardPage> {
       ),
       body: switch (state) {
         EmptyBoardState _ => _emptyState(),
-        FailureBoardState failure => _failureState(failure.message),
+        FailureBoardState _ => _failureState(),
         LoadedBoardState loaded => _loadedState(loaded.tasks),
         (_) => const SizedBox(),
       },
@@ -50,12 +50,22 @@ class _BoardPageState extends State<BoardPage> {
     );
   }
 
-  Widget _failureState(String message) {
+  Widget _failureState() {
     return Center(
       key: const Key('FailureState'),
-      child: Text(
-        'Falha ao listar as tasks\n\n$message',
-        textAlign: TextAlign.center,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text(
+            'Falha ao listar as tasks.',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8.0),
+          ElevatedButton(
+            onPressed: cubit.fetchTasks,
+            child: const Text('Tentar novamente'),
+          ),
+        ],
       ),
     );
   }
