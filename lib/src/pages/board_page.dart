@@ -27,6 +27,7 @@ class _BoardPageState extends State<BoardPage> {
       ),
       body: switch (state) {
         EmptyBoardState _ => _emptyState(),
+        FailureBoardState failure => _failureState(failure.message),
         LoadedBoardState loaded => _loadedState(loaded.tasks),
         (_) => const SizedBox(),
       },
@@ -46,6 +47,16 @@ class _BoardPageState extends State<BoardPage> {
     return const Center(
       key: Key('EmptyState'),
       child: Text('Adicione uma nova task'),
+    );
+  }
+
+  Widget _failureState(String message) {
+    return Center(
+      key: const Key('FailureState'),
+      child: Text(
+        'Falha ao listar as tasks\n\n$message',
+        textAlign: TextAlign.center,
+      ),
     );
   }
 
