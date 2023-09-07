@@ -21,53 +21,50 @@ class BoardCubit extends Cubit<BoardState> {
   }
 
   Future<void> addTask(Task task) async {
-    final state = this.state;
-    if (state is! LoadedBoardState) return;
+    final tasks = _getTasks();
+    if (tasks == null) return;
 
-    final tasks = state.tasks.toList();
     tasks.add(task);
 
-    try {
-      await repository.update(tasks);
-      emit(LoadedBoardState(tasks));
-    } catch (e) {
-      emit(FailureBoardState(e.toString()));
-    }
+    await _updateTasks(tasks);
   }
 
   Future<void> removeTask(Task task) async {
-    final state = this.state;
-    if (state is! LoadedBoardState) return;
+    final tasks = _getTasks();
+    if (tasks == null) return;
 
-    final tasks = state.tasks.toList();
     tasks.remove(task);
 
-    try {
-      await repository.update(tasks);
-      emit(LoadedBoardState(tasks));
-    } catch (e) {
-      emit(FailureBoardState(e.toString()));
-    }
+    await _updateTasks(tasks);
   }
 
   Future<void> checkTask(Task task) async {
-    final state = this.state;
-    if (state is! LoadedBoardState) return;
+    final tasks = _getTasks();
+    if (tasks == null) return;
 
-    final tasks = state.tasks.toList();
     final index = tasks.indexOf(task);
     tasks[index] = task.copyWith(checked: !task.checked);
 
-    try {
-      await repository.update(tasks);
-      emit(LoadedBoardState(tasks));
-    } catch (e) {
-      emit(FailureBoardState(e.toString()));
-    }
+    await _updateTasks(tasks);
   }
 
   @visibleForTesting
   void addTasks(List<Task> tasks) {
     emit(LoadedBoardState(tasks));
+  }
+
+  List<Task>? _getTasks() {
+    final state = this.state;
+    if (state is! LoadedBoardState) return null;
+    return state.tasks.toList();
+  }
+
+  Future<void> _updateTasks(List<Task> tasks) async {
+    try {
+      await repository.update(tasks);
+      emit(LoadedBoardState(tasks));
+    } catch (e) {
+      emit(FailureBoardState(e.toString()));
+    }
   }
 }
