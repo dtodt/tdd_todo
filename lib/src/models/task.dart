@@ -6,9 +6,9 @@ class Task extends Equatable {
   final bool checked;
 
   const Task({
-    required this.id,
     required this.description,
     this.checked = false,
+    this.id = -1,
   });
 
   @override
