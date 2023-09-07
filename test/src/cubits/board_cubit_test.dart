@@ -34,6 +34,25 @@ void main() {
       // Act
       await cubit.fetchTasks();
     });
+
+    test('should emit failure on error', () async {
+      // Arrange
+      when(
+        () => repository.fetch(),
+      ).thenThrow(Exception());
+
+      // Assert
+      expect(
+        cubit.stream,
+        emitsInOrder([
+          isA<LoadingBoardState>(),
+          isA<FailureBoardState>(),
+        ]),
+      );
+
+      // Act
+      await cubit.fetchTasks();
+    });
   });
   // group('addTask |', () { });
   // group('removeTask |', () { });
